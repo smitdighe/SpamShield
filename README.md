@@ -2,6 +2,9 @@
 
 Real-time SMS threat detection system using TF-IDF + Logistic Regression, exposed via REST API and interactive web interface.
 
+## 🚀 Live Demo
+👉 [SpamShield Web App](https://spamshield-36t0.onrender.com)
+
 ---
 
 ## 🎯 Problem
