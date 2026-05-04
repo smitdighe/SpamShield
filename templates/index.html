@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpamShield — SMS Spam Classifier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --border: #1e1e2e;
+            --accent: #00ff88;
+            --danger: #ff3c5f;
+            --text: #e8e8f0;
+            --subtext: #7777aa;
+            --muted: #444466;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Syne", sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 136, 0.03) 0px,
+                    rgba(0, 255, 136, 0.03) 1px,
+                    transparent 1px,
+                    transparent 40px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(0, 255, 136, 0.03) 0px,
+                    rgba(0, 255, 136, 0.03) 1px,
+                    transparent 1px,
+                    transparent 40px
+                );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--subtext);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+            font-family: "Syne", sans-serif;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            font-family: "Space Mono", monospace;
+            font-size: 13px;
+            color: var(--subtext);
+            letter-spacing: 1px;
+        }
+
+        /* ── INPUT CARD ── */
+        .input-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 14px;
+            font-family: "Space Mono", monospace;
+            font-size: 14px;
+            color: var(--text);
+            resize: vertical;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-family: "Syne", sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            flex: 2;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--border);
+            border-color: var(--muted);
+        }
+
+        /* ── EXAMPLES ── */
+        .examples {
+            margin-bottom: 32px;
+        }
+
+        .examples-label {
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+            color: var(--subtext);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 8px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .chip.spam:hover {
+            background: rgba(255, 60, 95, 0.15);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .chip.ham:hover {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── RESULT CARD ── */
+        .result-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .verdict {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .verdict.spam {
+            color: var(--danger);
+        }
+
+        .verdict.ham {
+            color: var(--accent);
+        }
+
+        .confidence-section {
+            margin-bottom: 20px;
+        }
+
+        .confidence-label {
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+            color: var(--subtext);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .confidence-pill {
+            display: inline-block;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: "Space Mono", monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .confidence-bar-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .confidence-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.6s ease-out;
+        }
+
+        .confidence-bar.spam {
+            background: var(--danger);
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            margin-top: auto;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+            color: var(--subtext);
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .footer a:hover {
+            opacity: 0.7;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 36px;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-primary {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="badge">
+                <span class="dot"></span>
+                ML · TF-IDF · LOGISTIC REGRESSION
+            </div>
+            <h1>Spam<span>Shield</span></h1>
+            <p class="subtitle">Real-time SMS spam detection</p>
+        </div>
+
+        <!-- INPUT CARD -->
+        <div class="input-card">
+            <textarea id="messageInput" placeholder="Paste your SMS message here..."></textarea>
+            <div class="button-group">
+                <button class="btn-primary" id="analyzeBtn">Analyze Message</button>
+                <button class="btn-ghost" id="clearBtn">Clear</button>
+            </div>
+        </div>
+
+        <!-- EXAMPLES -->
+        <div class="examples">
+            <span class="examples-label">Try Examples</span>
+            <div class="chips">
+                <span class="chip spam" data-message="Congratulations! You've won a FREE £1000 voucher. Claim now at http://bit.ly/xxx">🚨 Spam: Lottery scam</span>
+                <span class="chip spam" data-message="Click here to confirm your bank account https://fake-bank.com/confirm">🚨 Spam: Phishing</span>
+                <span class="chip spam" data-message="URGENT: Verify your PayPal immediately or account will be closed">🚨 Spam: Urgent action</span>
+                <span class="chip ham" data-message="Hey! Are we still on for coffee tomorrow at 3?">✅ Ham: Personal</span>
+                <span class="chip ham" data-message="Your appointment is confirmed for March 15th at 2:00 PM">✅ Ham: Appointment</span>
+            </div>
+        </div>
+
+        <!-- RESULT CARD -->
+        <div class="result-card" id="resultCard">
+            <div class="verdict" id="verdict"></div>
+            <div class="confidence-section">
+                <span class="confidence-label">Model Confidence</span>
+                <div class="confidence-pill" id="confidencePill"></div>
+                <div class="confidence-bar-container">
+                    <div class="confidence-bar" id="confidenceBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            Built with scikit-learn · Flask · Python | <a href="https://github.com/smitdighe" target="_blank">GitHub</a>
+        </div>
+    </div>
+
+    <script>
+        const messageInput = document.getElementById("messageInput");
+        const analyzeBtn = document.getElementById("analyzeBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        const resultCard = document.getElementById("resultCard");
+        const verdict = document.getElementById("verdict");
+        const confidencePill = document.getElementById("confidencePill");
+        const confidenceBar = document.getElementById("confidenceBar");
+        const chips = document.querySelectorAll(".chip");
+
+        // ── SUBMIT MESSAGE ──
+        async function analyzeMessage() {
+            const message = messageInput.value.trim();
+
+            if (!message) {
+                alert("Please enter a message to analyze.");
+                return;
+            }
+
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = "Analyzing…";
+            resultCard.classList.remove("show");
+
+            try {
+                const response = await fetch("/api/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult(data);
+                } else {
+                    alert(data.error || "An error occurred.");
+                }
+            } catch (error) {
+                alert("Failed to connect to the server.");
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = "Analyze Message";
+            }
+        }
+
+        function showResult(data) {
+            const isSpam = data.is_spam;
+            const confidence = data.confidence;
+
+            verdict.textContent = isSpam ? "🚨 SPAM" : "✅ NOT SPAM";
+            verdict.className = isSpam ? "verdict spam" : "verdict ham";
+
+            confidencePill.textContent = `${confidence}%`;
+            confidenceBar.className = isSpam ? "confidence-bar spam" : "confidence-bar";
+
+            resultCard.classList.add("show");
+
+            setTimeout(() => {
+                confidenceBar.style.width = `${confidence}%`;
+            }, 50);
+        }
+
+        function clearAll() {
+            messageInput.value = "";
+            resultCard.classList.remove("show");
+            messageInput.focus();
+        }
+
+        // ── EVENT LISTENERS ──
+        analyzeBtn.addEventListener("click", analyzeMessage);
+        clearBtn.addEventListener("click", clearAll);
+
+        messageInput.addEventListener("keydown", (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                analyzeMessage();
+            }
+        });
+
+        // ── EXAMPLE CHIPS ──
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                messageInput.value = chip.dataset.message;
+                setTimeout(analyzeMessage, 100);
+            });
+        });
+
+        // ── FOCUS ON LOAD ──
+        messageInput.focus();
+    </script>
+</body>
+</html>
