@@ -1,11 +1,14 @@
-# SpamShield — SMS Spam Classifier
+# 🚨 SpamShield — SMS Spam Detection System
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat-square)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-1.5-orange?style=flat-square)
-![Flask](https://img.shields.io/badge/Flask-3.0-black?style=flat-square)
-![Accuracy](https://img.shields.io/badge/Accuracy-~98%25+-brightgreen?style=flat-square)
+Real-time SMS threat detection system using TF-IDF + Logistic Regression, exposed via REST API and interactive web interface.
 
-Real-time SMS spam detection with TF-IDF vectorization and logistic regression, served via Flask REST API and web UI.
+---
+
+## 🎯 Problem
+
+Spam and phishing SMS messages are a major security threat, often used for fraud, identity theft, and financial scams. This project demonstrates how classical NLP techniques can effectively detect such threats in real time.
+
+---
 
 ## ✨ Features
 
@@ -15,6 +18,33 @@ Real-time SMS spam detection with TF-IDF vectorization and logistic regression, 
 - **REST API**: POST `/api/predict` for programmatic classification
 - **Web UI**: Interactive interface with confidence meter and example messages
 - **High Accuracy**: ~98%+ classification accuracy on test set
+
+---
+
+## 🛠️ Tech Stack
+
+### 💻 Programming Language
+<p>
+  <img src="https://skillicons.dev/icons?i=python" />
+</p>
+
+### 🧠 Machine Learning
+- scikit-learn  
+- Pandas  
+- NumPy  
+
+### 🌐 Web Development
+<p>
+  <img src="https://skillicons.dev/icons?i=html" style="margin-right:10px;" />
+  <img src="https://skillicons.dev/icons?i=css" style="margin-right:10px;" />
+  <img src="https://skillicons.dev/icons?i=flask" style="margin-right:10px;" />
+  <img src="https://skillicons.dev/icons?i=js" />
+</p>
+
+### ⚙️ Backend Framework
+- Flask
+
+---
 
 ## 🚀 Quick Start
 
@@ -32,6 +62,8 @@ python app.py
 ```
 
 Open your browser to `http://localhost:5000` and start classifying messages.
+
+---
 
 ## 🔌 API Usage
 
@@ -54,23 +86,44 @@ curl -X POST http://localhost:5000/api/predict \
 }
 ```
 
+---
+
+## 💻 CLI Usage
+
+```bash
+python app.py
+```
+
+### Example
+
+→ You won a FREE iPhone!!!
+🚨 SPAM (confidence: 98.7%)
+
+---
+
 ## 📁 Project Structure
 
 ```
 spam-classifier/
-├── train.py              # Model training pipeline (downloads dataset,trains, saves model)
-├── predict.py            # CLI interface for spam classification (interactive)
-├── app.py                # Flask web server with REST API endpoint
-├── requirements.txt      # Pinned dependencies (Flask, scikit-learn, pandas, numpy)
-├── .gitignore           # Git ignore rules (excludes model/, data/, __pycache__)
-├── README.md            # This file
-├── data/                # Dataset storage (git-ignored)
-├── model/               # Serialized model artifacts (git-ignored)
-│   ├── model.pkl        # Trained Logistic Regression model
-│   └── vectorizer.pkl   # Fitted TF-IDF vectorizer
-└── templates/           # Flask HTML templates
-    └── index.html       # Web UI (dark theme, vanilla JS)
+├── train.py
+├── predict.py
+├── app.py
+├── requirements.txt
+├── .gitignore
+├── README.md
+├── data/
+│   └── sms.tsv
+├── model/
+│   ├── model.pkl
+│   └── vectorizer.pkl
+└── templates/
+│   └── index.html
+└── static/
+    └── favicon.ico
+
 ```
+
+---
 
 ## 🧠 How It Works
 
@@ -78,6 +131,8 @@ spam-classifier/
 2. **Vectorization**: TF-IDF extracts unigram + bigram features (max 5000 features) from training messages only
 3. **Model Training**: Logistic Regression (C=5, max_iter=1000) fitted on vectorized training data
 4. **Prediction**: Input text vectorized using the same fitted vectorizer, then classified with confidence probability
+
+---
 
 ## 📈 Model Performance
 
@@ -88,13 +143,26 @@ spam-classifier/
 
 **Overall Accuracy: 0.9809** (98.09% on test set)
 
+---
+
+## 🏆 Highlights
+
+- End-to-end ML pipeline (data → training → deployment)
+- High accuracy on real-world dataset
+- Fast inference (<50ms)
+- Clean REST API + UI integration
+- Production-ready structure
+
+---
+
 ## 🛠️ Possible Improvements
 
-- [ ] Experiment with Naive Bayes and SVM classifiers for comparison
-- [ ] Add multilingual support (translate before classification)
-- [ ] Deploy to Render, Railway, or HuggingFace Spaces for public access
-- [ ] Add message history and statistics to web UI
-- [ ] Dockerize for containerized deployment
+- Add explainability (highlight spam words)
+- Try SVM / Naive Bayes comparisons
+- Add user authentication
+- Store prediction history
+
+---
 
 ## 📜 Dataset
 
