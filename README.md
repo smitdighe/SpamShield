@@ -1,11 +1,10 @@
-# SpamShield — SMS Spam Classifier
+# 🚨 SpamShield — SMS Spam Detection System
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat-square)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-1.5-orange?style=flat-square)
-![Flask](https://img.shields.io/badge/Flask-3.0-black?style=flat-square)
-![Accuracy](https://img.shields.io/badge/Accuracy-~98%25+-brightgreen?style=flat-square)
+Real-time SMS threat detection system using TF-IDF + Logistic Regression, exposed via REST API and interactive web interface.
 
-Real-time SMS spam detection with TF-IDF vectorization and logistic regression, served via Flask REST API and web UI.
+## 🎯 Problem
+
+Spam and phishing SMS messages are a major security threat, often used for fraud, identity theft, and financial scams. This project demonstrates how classical NLP techniques can effectively detect such threats in real time.
 
 ## ✨ Features
 
