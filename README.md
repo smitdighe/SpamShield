@@ -157,10 +157,10 @@ spam-classifier/
 
 ## 🛠️ Possible Improvements
 
-🚀 Add explainability (highlight spam words)
-🚀 Try SVM / Naive Bayes comparisons
-🚀 Add user authentication
-🚀 Store prediction history
+- Add explainability (highlight spam words)
+- Try SVM / Naive Bayes comparisons
+- Add user authentication
+- Store prediction history
 
 ---
 
