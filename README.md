@@ -101,20 +101,6 @@ python app.py
 
 ---
 
-## 🏗️ Architecture
-
-User Input
-     ↓
-TF-IDF Vectorizer
-     ↓
-Logistic Regression Model
-     ↓
-Prediction (Spam/Ham + Confidence)
-     ↓
-Flask API / Web UI
-
----
-
 ## 📁 Project Structure
 
 ```
