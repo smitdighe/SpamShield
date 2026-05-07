@@ -21,7 +21,7 @@ def predict_message(text: str) -> dict:
     pred = model.predict(X_vec)[0]
     probs = model.predict_proba(X_vec)[0]
     
-    confidence = round(max(probs) * 100, 2)
+    confidence = max(probs)
     
     label = pred
     is_spam = label == "spam"
