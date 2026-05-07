@@ -21,7 +21,7 @@ def predict_message(text: str) -> dict:
     pred = model.predict(X_vec)[0]
     probs = model.predict_proba(X_vec)[0]
     
-    confidence = max(probs)  # FIXED
+    confidence = round(max(probs) * 100, 2)
     
     label = pred
     is_spam = label == "spam"
@@ -64,5 +64,8 @@ def api_predict():
     }), 200
 
 # ── RUN APP ──
+import os
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
