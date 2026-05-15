@@ -20,7 +20,7 @@ Spam and phishing SMS messages are a major security threat, often used for fraud
 - **Serialization**: Pickle-based model persistence
 - **REST API**: POST `/api/predict` for programmatic classification
 - **Web UI**: Interactive interface with confidence meter and example messages
-- **High Accuracy**: ~98%+ classification accuracy on test set
+- **High Accuracy**: ~96%+ classification accuracy on test set
 
 ---
 
