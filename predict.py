@@ -2,6 +2,8 @@ import os
 import sys
 import pickle
 
+from sqlalchemy import label
+
 # ── LOAD MODEL AND VECTORIZER ──
 if not os.path.exists("model/model.pkl") or not os.path.exists("model/vectorizer.pkl"):
     print("Model not found. Run python train.py first.")
@@ -19,10 +21,11 @@ print("✅ Model ready. Type a message to classify (or 'quit' to exit).")
 def predict_message(text):
     X_vec = vectorizer.transform([text])
     pred = model.predict(X_vec)[0]
-    confidence = model.predict_proba(X_vec)[0][pred]
-    
-    label = "spam" if pred == 1 else "ham"
-    is_spam = pred == 1
+    probs = model.predict_proba(X_vec)[0]
+    confidence = max(probs)
+
+    label = pred
+    is_spam = label == "spam"
     
     return {
         "label": label,
