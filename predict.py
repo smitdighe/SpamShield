@@ -2,9 +2,6 @@ import os
 import sys
 import pickle
 
-from sqlalchemy import label
-
-# ── LOAD MODEL AND VECTORIZER ──
 if not os.path.exists("model/model.pkl") or not os.path.exists("model/vectorizer.pkl"):
     print("Model not found. Run python train.py first.")
     sys.exit(1)

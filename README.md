@@ -52,7 +52,7 @@ Spam and phishing SMS messages are a major security threat, often used for fraud
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/yourusername/spam-classifier.git
+git clone https://github.com/yourusername/SpamShield.git
 cd spam-classifier
 pip install -r requirements.txt
 python train.py
